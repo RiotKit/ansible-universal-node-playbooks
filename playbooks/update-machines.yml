@@ -1,0 +1,62 @@
+#
+# UPDATE MACHINE PLAYBOOK
+# =======================
+#  Performs packages upgrade on target machine. Considers a fact that docker daemon could be corrupted after update
+#  and will attempt to restart it with all dependent services
+#
+
+
+#
+# Make sure we still know the port, even when we changed the port for security reasons on previous runs
+#
+- hosts: all
+  gather_facts: no
+  roles:
+      - role: blackandred.server_ssh_fallback_port
+        when: ssh_fallback_port is defined and ssh_fallback_port > 0
+        vars:
+            fallback_ssh_port: "{{ ssh_fallback_port }}"
+
+
+#
+# Run all roles one-by-one
+#
+- hosts: all
+  gather_facts: yes
+  force_handlers: yes
+  tasks:
+      - name: Detect docker version
+        become: yes
+        shell: "dpkg -s docker-ce | grep -i version | awk '{print $2}'"
+        register: docker_version_before
+
+      - name: Perform system upgrade
+        become: yes
+        apt:
+            update_cache: yes
+            upgrade: dist
+
+      - name: Detect docker version
+        become: yes
+        shell: "dpkg -s docker-ce | grep -i version | awk '{print $2}'"
+        register: docker_version_after
+
+      - name: Stop dependent services
+        become: yes
+        systemd:
+            name: "{{ item }}"
+            state: stopped
+        with_items: "{{ docker_dependent_services }}"
+
+      - name: Restart docker daemon
+        become: yes
+        systemd:
+            name: docker
+            state: restarted
+
+      - name: Bring dependent services back
+        become: yes
+        systemd:
+            name: "{{ item }}"
+            state: started
+        with_items: "{{ docker_dependent_services }}"

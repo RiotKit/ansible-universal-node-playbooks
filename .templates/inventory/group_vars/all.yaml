@@ -1,0 +1,57 @@
+
+# https://github.com/zwiazeksyndykalistowpolski/server-multi-user
+default_role_users:
+    technical_entrypoint: "/project/make.sh"
+    enable_technical_entrypoint: false
+
+    # technical administrator used for automatic deployments
+    technical_account: "tech.admin"
+    technical_password: 'xyz'        # mkpasswd --method=SHA-512, also important - single quotes are important
+    technical_account_id: 1800
+    technical_group: "technical"
+    technical_group_id: 4055
+    users:
+        accounts: []
+
+
+# https://github.com/zwiazeksyndykalistowpolski/server-basic-security
+default_role_basic_security:
+    ssh_idle_time: "36000"
+    ssh_permit_root_login: no
+    ssh_input_port: "{{ ssh_target_port }}"
+    change_root_password: no
+    root_password: ""
+    configure_firewall: yes
+    firewall_interface: ens192  # important: adjust this to your needs, invalid value may cut off access to the machine
+    firewall_whitelist_local_network_addresses: true
+    firewall_allowed_outgoing_ports:
+        - "22"
+        - "{{ ssh_target_port }}"
+        - "80"
+        - "443"
+
+
+# https://github.com/zwiazeksyndykalistowpolski/server-basic-software
+default_role_basic_software:
+    docker: yes
+    docker_schedule_clean_up: yes
+    # Enforce docker to be updated (WARNING: will turn off and turn on docker)
+    enforce_docker_update: no
+
+
+# https://github.com/riotkit-org/server-tweak
+default_role_tune:
+    # Be careful with setting this to "no", even security upgrades are able to break docker daemon. Its better to manually upgrade system.
+    remove_unattended_upgrades: yes
+    remove_qemu_guest_agent: yes
+    tune_docker: yes
+    adjust_swappiness: yes
+    swappiness: 10
+
+
+# https://github.com/riotkit-org/server-logs
+default_role_logs:
+    configure_logrotate: no
+    configure_systemd: yes
+    systemd_max_logs_disk_space: 100M
+    systemd_max_file_sec: 1month

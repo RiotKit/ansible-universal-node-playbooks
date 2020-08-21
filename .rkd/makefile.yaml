@@ -1,27 +1,48 @@
 version: org.riotkit.rkd/yaml/v1
 imports: []
 tasks:
-    :hello:
-        description: Hello world task
-        arguments:
-            "--name":
-                help: "Your name"
-                required: True
+    :node:setup:
+        description: Sets up the inventory
         steps: |
-            echo "Hello $ARG_NAME"
+            if [[ -d inventory ]]; then
+                cd inventory; git pull; cd ..
+            else
+                git clone $INVENTORY_GIT_URL inventory
+            fi
 
-    :hello:python:
-        description: Hello world task
-        arguments:
-            "--name":
-                help: "Your name"
-                required: True
+    :node:copy-host-defaults:
+        description: "Copy default values for hosts in the inventory (warning: it will override existing files)"
+        steps: cp -prv .templates/* ./
+
+    :node:list:playbooks:
+        description: List all available playbooks
         steps: |
             #!python
+            import os
+            for element in os.scandir('playbooks'):
+                print(element.name)
 
-            # those two lines are optional (for your eyes and for IDE - you can also import those classes there)
-            ctx: ExecutionContext
-            this: TaskInterface
-
-            print('Hello %s' % ctx.get_arg('--name'))
             return True
+
+    :node:clean:
+        description: Clean up temporary files
+        steps: "rm /tmp/.rkt-ansible.*.yaml"
+
+    :node:deploy:
+        description: Run a deployment
+        arguments:
+            "playbook":
+                help: "Playbook name, see :list:playbooks"
+            "--args":
+                help: "Additional Ansible commandline arguments"
+                required: False
+            "--role":
+                help: "Limit to a given role"
+                required: False
+        steps: |
+            if [[ $ARG_ROLE ]]; then
+                ARG_ARGS="$ARG_ARGS -t $ARG_ROLE"
+            fi
+
+            ansible-playbook ./playbooks/$ARG_PLAYBOOK -i inventory/hosts.cfg ${ARG_ARGS}
+

@@ -1,0 +1,8 @@
+roles:
+    - src: blackandred.server_basic_software
+    - src: blackandred.server_multi_user
+    - src: git+https://github.com/riotkit-org/infrastructure-ansible-logs.git
+    - src: blackandred.server_ssh_fallback_port
+    - src: blackandred.server_basic_security
+    - src: git+https://github.com/riotkit-org/infrastructure-ansible-tweak-os
+    - src: blackandred.server_secure_storage

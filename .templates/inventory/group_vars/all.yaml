@@ -126,7 +126,7 @@ default_role_basic_software:
     enforce_docker_update: no
 
 
-# https://github.com/riotkit-org/server-tweak
+# https://github.com/riotkit-org/infrastructure-ansible-tweak-os
 default_role_tune:
     # Be careful with setting this to "no", even security upgrades are able to break docker daemon. Its better to manually upgrade system.
     remove_unattended_upgrades: yes
@@ -142,3 +142,8 @@ default_role_logs:
     configure_systemd: yes
     systemd_max_logs_disk_space: 100M
     systemd_max_file_sec: 1month
+
+
+default_role_system_settings:
+    timezone: Europe/Rome
+    locale: "en_GB.UTF-8"

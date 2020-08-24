@@ -24,6 +24,19 @@
   gather_facts: yes
   force_handlers: yes
   tasks:
+      # ===================================
+      # Set misc system settings eg. locale
+      # ===================================
+      - name: Set system settings
+        when: role_system_settings is defined
+        block:
+          - name: Include required vars
+            set_fact:
+            args: "{{ default_role_system_settings | combine(role_system_settings | default({}), recursive=True) }}"
+
+          - include_role: name=system-settings
+            tags: system_settings
+
       # ==========
       # Multi User
       # ==========

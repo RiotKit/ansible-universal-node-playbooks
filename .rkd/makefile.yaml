@@ -10,6 +10,11 @@ tasks:
                 git clone $INVENTORY_GIT_URL inventory
             fi
 
+    :node:install-roles:
+        description: Installs roles from Ansible Galaxy
+        steps: |
+            ansible-galaxy install --roles-path=roles/ -r ./requirements.yml
+
     :node:copy-host-defaults:
         description: "Copy default values for hosts in the inventory (warning: it will override existing files)"
         steps: cp -prv .templates/* ./

@@ -19,6 +19,7 @@ $(./setup-venv.sh)
 cp .env-dist .env
 nano .env
 
+rkd :install-roles
 rkd :setup
 rkd :copy-host-defaults
 ```

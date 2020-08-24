@@ -1,3 +1,37 @@
-- name: Set timezone
+- name: Install language packs
+  become: yes
+  apt:
+      state: present
+      name:
+          - language-pack-en
+          - language-pack-en-base
+          - language-pack-fr
+          - language-pack-fr-base
+          - language-pack-pl
+          - language-pack-pl-base
+          - language-pack-de
+          - language-pack-de-base
+          - language-pack-es
+          - language-pack-es-base
+          - manpages
 
-- name: Set locale
+- name: Set timezone
+  become: yes
+  shell: "timedatectl set-timezone {{ timezone }}"
+
+- name: Select locale
+  become: yes
+  locale_gen:
+      name: "{{ locale }}"
+      state: present
+
+- name: Set default locale
+  become: yes
+  lineinfile:
+      dest: "/etc/default/locale"
+      regexp: "^LANG="
+      line: "LANG={{ locale }}"
+
+- name: Reconfigure locales
+  become: yes
+  shell: dpkg-reconfigure -f noninteractive locales

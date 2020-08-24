@@ -6,8 +6,6 @@
 /inventory
 /.env
 /.temp/dynamic_vars/*
-
-
-
+/roles/*.*
 
 !.gitkeep

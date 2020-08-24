@@ -93,7 +93,7 @@ default_role_users:
 
     # technical administrator used for automatic deployments
     technical_account: "tech.admin"
-    technical_password: 'xyz'        # mkpasswd --method=SHA-512, also important - single quotes are important
+    #technical_password: 'xyz'        # mkpasswd --method=SHA-512, also important - single quotes are important
     technical_account_id: 1800
     technical_group: "technical"
     technical_group_id: 4055
@@ -109,7 +109,7 @@ default_role_basic_security:
     change_root_password: no
     root_password: ""
     configure_firewall: yes
-    firewall_interface: ens192  # important: adjust this to your needs, invalid value may cut off access to the machine
+    #firewall_interface: ens192  # important: adjust this to your needs, invalid value may cut off access to the machine
     firewall_whitelist_local_network_addresses: true
     firewall_allowed_outgoing_ports:
         - "22"

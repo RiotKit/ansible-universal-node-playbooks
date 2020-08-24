@@ -1,4 +1,91 @@
 
+docker_dependent_services: ['project']
+
+#
+# Encryption role settings
+#
+# instead of overriding hooks override this to adjust hooks
+enc_directories_to_map:
+    - { dst: "/project", name: "project" }
+    - { dst: "/root", name: "root" }
+    - { dst: "/var/log", name: "var-log" }
+enc_notify_systemd_service: "project"
+
+# https://github.com/zwiazeksyndykalistowpolski/server-secure-storage
+default_role_encryption:
+    enc_file: /storage                # path, where all of the data will be stored
+    enc_file_size: 17160M             # examples: 256M, 20G, 500G
+    enc_mount_name: storage           # mount name, should be a-z, lower case, without special letters
+    enc_mount_path: /mnt/storage      # mount path
+    enc_file_filesystem: ext4         # any filesystem supported by mkfs (and supported by the operating system)
+    enc_hidden_volume_size: "16900M"  # ~17 GB
+    enc_filesystem_create_if_not_exists: yes
+    hide_sensitive_output: no
+
+    #enc_passphrase: "test123"
+    #enc_hidden_volume_passphrase: "hidden123"
+
+    # tcplay settings
+    hashing_algorithm: whirlpool
+    encryption_algorithm: AES-256-XTS
+
+    hook_pre_mount: ""
+    hook_post_mount: >
+        set -x;
+
+        mkdir -p /mnt/storage/docker/volumes /var/lib/docker;
+
+        {% for directory in enc_directories_to_map %}
+        BACKUP=false;
+
+        if [[ -d "{{ directory.dst }}" ]]; then
+            rm -rf "{{ directory.dst }}.2";
+            mv "{{ directory.dst }}" "{{ directory.dst }}.2";
+            BACKUP=true;
+        fi;
+
+        mkdir -p "{{ directory.dst }}";
+        mount -o bind "/mnt/storage/{{ directory.name }}" "{{ directory.dst }}" || exit 1;
+
+        if [[ "${BACKUP}" == "true" ]]; then
+            mv "{{ directory.dst }}.2/*" "{{ directory.dst }}/";
+            mv "{{ directory.dst }}.2/.*" "{{ directory.dst }}/" || true;
+            rmdir "{{ directory.dst }}.2" || true;
+        fi;
+        {% endfor %}
+
+        mount -o bind /mnt/storage/docker /var/lib/docker || exit 1;
+        mount --bind /var/lib/docker/plugins /var/lib/docker/plugins || true;
+        mount --make-private /var/lib/docker/plugins || true;
+
+        {% if enc_notify_systemd_service %}
+        if [[ -f /etc/systemd/system/{{ enc_notify_systemd_service }}.service ]]; then
+            sudo systemctl restart docker;
+            sleep 5;
+            sudo systemctl restart project;
+        fi;
+        {% endif %}
+
+    hook_pre_unmount: >
+        {% if enc_notify_systemd_service %}
+        if [[ -f /etc/systemd/system/{{ enc_notify_systemd_service }}.service ]]; then
+            sudo systemctl disable docker;
+            sudo systemctl disable project;
+
+            sudo systemctl stop project;
+            sudo systemctl stop docker;
+        fi;
+        {% endif %}
+
+        umount /var/lib/docker/plugins || true;
+        umount /var/lib/docker || true;
+
+        {% for directory in enc_directories_to_map %}
+        umount "{{ directory.dst }}" || true;
+        {% endfor %}
+
+    hook_post_unmount: ""
+
 # https://github.com/zwiazeksyndykalistowpolski/server-multi-user
 default_role_users:
     technical_entrypoint: "/project/make.sh"

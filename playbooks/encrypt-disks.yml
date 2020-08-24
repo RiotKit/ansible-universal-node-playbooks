@@ -1,0 +1,30 @@
+#
+# ENCRYPTION PLAYBOOK
+# ===================
+#   Setup an optional partial disk encryption.
+#   WARNING: Make a backup of target folders that would be mounted, there is a high risk of loosing data when setting up
+#            a fresh encryption.
+#
+
+
+- hosts: all
+  gather_facts: no
+  roles:
+      - role: blackandred.server_ssh_fallback_port
+        when: ssh_fallback_port is defined and ssh_fallback_port > 0
+        vars:
+            fallback_ssh_port: "{{ ssh_fallback_port }}"
+
+
+- hosts: all
+  gather_facts: yes
+  tasks:
+      - name: Encryption role
+        when: role_encryption is defined
+        block:
+          - name: Include required vars
+            set_fact:
+            args: "{{ default_role_encryption | combine(role_encryption | default({}), recursive=True) }}"
+
+          - include_role: name=blackandred.server_secure_storage
+            tags: encryption

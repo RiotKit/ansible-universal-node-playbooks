@@ -39,10 +39,30 @@ tasks:
             "--role":
                 help: "Limit to a given role"
                 required: False
+            "--host":
+                help: "Host name or group name"
+                required: True
+            "--vault":
+                help: "Ask for vault passwords"
+                action: store_true
         steps: |
             if [[ $ARG_ROLE ]]; then
                 ARG_ARGS="$ARG_ARGS -t $ARG_ROLE"
             fi
 
-            ansible-playbook ./playbooks/$ARG_PLAYBOOK -i inventory/hosts.cfg ${ARG_ARGS}
+            if [[ $ARG_VAULT ]]; then
+                ARG_ARGS="$ARG_ARGS --ask-vault-pass"
+            fi
 
+            ansible-playbook ./playbooks/$ARG_PLAYBOOK -i inventory/hosts.cfg --limit=${ARG_HOST} ${ARG_ARGS}
+
+
+    :node:encrypt-first-time:
+        description: Perform a partial disk encryption on freshly installed OS
+        arguments:
+            "--args":
+                help: "Additional Ansible commandline arguments"
+                required: False
+            "host":
+                help: "Host name or group name"
+        steps: ansible-playbook ./playbooks/encrypt-disks.yml --limit=$ARG_HOST -i inventory/hosts.cfg ${ARG_ARGS}

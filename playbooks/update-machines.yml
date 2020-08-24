@@ -1,5 +1,5 @@
 #
-# UPDATE MACHINE PLAYBOOK
+# UPDATE MACHINES PLAYBOOK
 # =======================
 #  Performs packages upgrade on target machine. Considers a fact that docker daemon could be corrupted after update
 #  and will attempt to restart it with all dependent services
@@ -41,22 +41,34 @@
         shell: "dpkg -s docker-ce | grep -i version | awk '{print $2}'"
         register: docker_version_after
 
-      - name: Stop dependent services
-        become: yes
-        systemd:
-            name: "{{ item }}"
-            state: stopped
-        with_items: "{{ docker_dependent_services }}"
+      - set_fact:
+            should_rescue_services_after_docker_update: "{{ docker_version_after.stdout != docker_version_before.stdout }}"
 
-      - name: Restart docker daemon
-        become: yes
-        systemd:
-            name: docker
-            state: restarted
+      - debug:
+          var: docker_version_after
 
-      - name: Bring dependent services back
-        become: yes
-        systemd:
-            name: "{{ item }}"
-            state: started
-        with_items: "{{ docker_dependent_services }}"
+      - debug:
+          var: docker_version_before
+
+      - name: Rescue
+        when: should_rescue_services_after_docker_update
+        block:
+            - name: Stop dependent services
+              become: yes
+              systemd:
+                  name: "{{ item }}"
+                  state: stopped
+              with_items: "{{ docker_dependent_services }}"
+
+            - name: Restart docker daemon
+              become: yes
+              systemd:
+                  name: docker
+                  state: restarted
+
+            - name: Bring dependent services back
+              become: yes
+              systemd:
+                  name: "{{ item }}"
+                  state: started
+              with_items: "{{ docker_dependent_services }}"

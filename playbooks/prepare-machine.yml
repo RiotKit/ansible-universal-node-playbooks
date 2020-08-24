@@ -1,4 +1,11 @@
 #
+# PREPARE MACHINES PLAYBOOK
+# =========================
+#   Prepares a complete setup for each machine - including users, firewall, docker, journald
+#
+
+
+#
 # Make sure we still know the port, even when we changed the port for security reasons on previous runs
 #
 - hosts: all

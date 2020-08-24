@@ -106,6 +106,15 @@ With this combination you can divide access to multiple admins handling administ
 nano .env
 ```
 
+Editing inventory per host
+--------------------------
+
+This command will automatically encrypt existing and new file using AES-256 with Ansible Vault.
+
+```bash
+rkd :edit:host-config my-host.org
+```
+
 Deploying
 ---------
 

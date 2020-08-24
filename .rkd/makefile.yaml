@@ -66,3 +66,26 @@ tasks:
             "host":
                 help: "Host name or group name"
         steps: ansible-playbook ./playbooks/encrypt-disks.yml --limit=$ARG_HOST -i inventory/hosts.cfg ${ARG_ARGS}
+
+    :node:edit:host-config:
+        description: Edit an encrypted host_var file
+        arguments:
+            "host":
+                help: "Host name or group name"
+        steps: |
+            inventory_path=./inventory/host_vars/${ARG_HOST}.yaml
+
+            if [[ ! -f "${inventory_path}" ]]; then
+                echo " >> ${inventory_path} does not exist yet, creating - you will be prompted for password multiple times"
+                touch "${inventory_path}"
+                ansible-vault encrypt "${inventory_path}"
+
+            elif [[ "$(cat $inventory_path)" != *"ANSIBLE_VAULT"* ]]; then
+                echo " >> ${inventory_path} is not an encrypted file, encrypting - you will be prompted for password multiple times"
+                ansible-vault encrypt "${inventory_path}"
+            fi
+
+            set -x;
+            export EDITOR=${TEXT_EDITOR};
+            ansible-vault edit "${inventory_path}"
+            cd inventory && git add host_vars/${ARG_HOST}.yaml

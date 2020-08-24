@@ -73,7 +73,7 @@
             set_fact:
             args: "{{ default_role_tune | combine(role_tune | default({}), recursive=True) }}"
 
-          - include_role: name=blackandred.server_tune
+          - include_role: name=infrastructure-ansible-tweak-os
             tags: tune
 
       # ====
@@ -86,5 +86,5 @@
             set_fact:
             args: "{{ default_role_logs | combine(role_logs | default({}), recursive=True) }}"
 
-          - include_role: name=blackandred.server_logs
+          - include_role: name=infrastructure-ansible-logs
             tags: logs

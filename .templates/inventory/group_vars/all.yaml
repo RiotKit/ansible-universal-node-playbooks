@@ -144,6 +144,21 @@ default_role_logs:
     systemd_max_file_sec: 1month
 
 
+# https://github.com/Oefenweb/ansible-fail2ban
+default_role_fail2ban:
+    fail2ban_dbpurgeage: 86400
+    fail2ban_loglevel: "INFO"
+    fail2ban_logtarget: "SYSLOG"
+    fail2ban_syslog_target: "/var/log/fail2ban.log"
+    fail2ban_ignoreips: [127.0.0.1/8]
+    fail2ban_bantime: 600
+    fail2ban_maxretry: 6
+    fail2ban_services:
+        - name: sshd
+          port: "{{ ansible_ssh_port }}"
+          maxretry: 6
+          bantime: 600
+
 default_role_system_settings:
     timezone: Europe/Rome
     locale: "en_GB.UTF-8"

@@ -6,3 +6,5 @@ roles:
     - src: blackandred.server_basic_security
     - src: git+https://github.com/riotkit-org/infrastructure-ansible-tweak-os
     - src: blackandred.server_secure_storage
+    - src: oefenweb.fail2ban
+      version: v3.3.14

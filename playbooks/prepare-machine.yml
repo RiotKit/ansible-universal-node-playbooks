@@ -88,3 +88,13 @@
 
           - include_role: name=infrastructure-ansible-logs
             tags: logs
+
+      - name: Fail2ban role
+        when: role_fail2ban is defined
+        block:
+          - name: Include required vars
+            set_fact:
+            args: "{{ default_role_fail2ban | combine(role_fail2ban | default({}), recursive=True) }}"
+
+          - include_role: name=oefenweb.fail2ban
+            tags: fail2ban

@@ -107,13 +107,30 @@ With this combination you can divide access to multiple admins handling administ
 nano .env
 ```
 
-Editing inventory per host
---------------------------
+Editing configuration per host and disabling/enabling roles
+-----------------------------------------------------------
 
 This command will automatically encrypt existing and new file using AES-256 with Ansible Vault.
 
+**Please note: All values there are overriding `group_vars/all.yaml` default values for edited host**
+
+**To disable a role - remove or comment out it's section eg. `role_fail2ban`**
+
+**To enable a role without overriding any values (inheriting all defaults) just add empty section eg. `role_fail2ban: {}`**
+
 ```bash
 rkd :edit:host-config my-host.org
+```
+
+Setting default values for ALL hosts in inventory (hosts will inherit those values by default)
+----------------------------------------------------------------------------------------------
+
+When a host does not override given value, then it is inherited from global defaults.
+
+*Note: This file you can also encrypt and below command will support encrypted edits*
+
+```bash
+rkd :edit:all-hosts-defaults-config
 ```
 
 Deploying

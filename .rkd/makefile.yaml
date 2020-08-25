@@ -94,3 +94,20 @@ tasks:
             export EDITOR=${TEXT_EDITOR};
             ansible-vault edit "${inventory_path}"
             cd inventory && git add host_vars/${ARG_HOST}.yaml
+
+    :node:edit:all-hosts-defaults-config:
+        description: Edit a file that contains common values for all hosts
+        steps: |
+            inventory_path=./inventory/group_vars/all.yaml
+            export EDITOR=${TEXT_EDITOR};
+
+            if [[ ! -f "${inventory_path}" ]]; then
+                %RKD% :node:copy-host-defaults
+            fi
+
+            if [[ "$(cat $inventory_path)" == *"ANSIBLE_VAULT"* ]]; then
+                ansible-vault edit "${inventory_path}"
+                exit 0
+            fi
+
+            ${EDITOR} "${inventory_path}"

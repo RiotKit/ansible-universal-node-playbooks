@@ -96,5 +96,10 @@
             set_fact:
             args: "{{ default_role_fail2ban | combine(role_fail2ban | default({}), recursive=True) }}"
 
+          - name: Touch /var/log/auth.log
+            become: yes
+            path: /var/log/auth.log
+            state: touch
+
           - include_role: name=oefenweb.fail2ban
             tags: fail2ban

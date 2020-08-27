@@ -1,0 +1,39 @@
+---
+
+- tags: port-multiplexer
+  block:
+    - name: Install sslh
+      become: yes
+      package:
+          name: sslh
+          state: present
+
+    - name: Detect gateway interface
+      become: yes
+      shell: "ip route | head -n 1 | awk '/default/ { print $3 }'"
+      register: gw_interface_out
+
+    - name: Set gateway interface
+      set_fact:
+          gateway_interface: "{{ gw_interface_out.stdout }}"
+
+    - name: Create iptables script for transparent proxying
+      become: yes
+      template:
+          src: "{{ item.path }}"
+          dest: "/{{ item.path }}"
+          mode: u+rwx,g+rx,o+rx
+      with_items:
+          - { path: usr/local/bin/sslh-transparent, mode: u+rwx,g+rx,o+rx }
+          - { path: etc/default/sslh, mode: u+rwx,g+r,o+r }
+          - { path: etc/systemd/system/sslh-transparent.service, mode: u+rw,g+r,o+r }
+          - { path: etc/sslh.cfg, mode: u+rw,g+r,o+r }
+
+    - name: Enable services
+      become: yes
+      systemd:
+          name: "{{ item }}"
+          state: started
+      with_items:
+          - sslh
+          - sslh-transparent

@@ -29,68 +29,72 @@
       # ===================================
       - name: Set system settings
         when: role_system_settings is defined
+        tags: system_settings
         block:
           - name: Include required vars
             set_fact:
             args: "{{ default_role_system_settings | combine(role_system_settings | default({}), recursive=True) }}"
 
           - include_role: name=system-settings
-            tags: system_settings
 
       # ==========
       # Multi User
       # ==========
       - name: Users management role
         when: role_users is defined
+        tags: users
         block:
           - name: Include required vars
             set_fact:
             args: "{{ default_role_users | combine(role_users | default({}), recursive=True) }}"
 
           - include_role: name=blackandred.server_multi_user
-            tags: users
 
       # ==============
       # Basic Software
       # ==============
       - name: Basic Software role
         when: role_basic_software is defined
+        tags: basic_software
         block:
           - name: Include required vars
             set_fact:
             args: "{{ default_role_basic_software | combine(role_basic_software | default({}), recursive=True) }}"
 
           - include_role: name=blackandred.server_basic_software
-            tags: basic_software
 
       # ========
       # Tweaking
       # ========
       - name: Tweaking role
         when: role_tune is defined
+        tags: tune
         block:
           - name: Include required vars
             set_fact:
             args: "{{ default_role_tune | combine(role_tune | default({}), recursive=True) }}"
 
           - include_role: name=infrastructure-ansible-tweak-os
-            tags: tune
 
       # ====
       # Logs
       # ====
       - name: Logs role
         when: role_logs is defined
+        tags: logs
         block:
           - name: Include required vars
             set_fact:
             args: "{{ default_role_logs | combine(role_logs | default({}), recursive=True) }}"
 
           - include_role: name=infrastructure-ansible-logs
-            tags: logs
 
+      # =========================
+      # Security - IPS - Fail2Ban
+      # =========================
       - name: Fail2ban role
         when: role_fail2ban is defined
+        tags: fail2ban
         block:
           - name: Include required vars
             set_fact:
@@ -98,8 +102,21 @@
 
           - name: Touch /var/log/auth.log
             become: yes
-            path: /var/log/auth.log
-            state: touch
+            file:
+                path: /var/log/auth.log
+                state: touch
 
           - include_role: name=oefenweb.fail2ban
-            tags: fail2ban
+
+      # ==========================================
+      # Security - optional ports to mask SSH port
+      # ==========================================
+      - name: Multiplexer role
+        when: role_port_multiplexer is defined
+        tags: port-multiplexer
+        block:
+          - name: Include required vars
+            set_fact:
+            args: "{{ default_role_port_multiplexer | combine(role_port_multiplexer | default({}), recursive=True) }}"
+
+          - include_role: name=port-multiplexer

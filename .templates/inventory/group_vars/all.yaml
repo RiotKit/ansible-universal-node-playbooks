@@ -162,3 +162,9 @@ default_role_fail2ban:
 default_role_system_settings:
     timezone: Europe/Rome
     locale: "en_GB.UTF-8"
+
+
+default_role_port_multiplexer:
+    sslh_route_to_ssh_port: 22
+    sslh_route_to_http_port: 80
+    sslh_route_to_tls_port: 4443

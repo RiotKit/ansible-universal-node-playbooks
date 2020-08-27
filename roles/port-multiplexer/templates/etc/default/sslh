@@ -1,0 +1,3 @@
+RUN=no
+DAEMON=/usr/sbin/sslh
+DAEMON_OPTS="--user sslh -F /etc/sslh.cfg --pidfile /var/run/sslh/sslh.pid"

@@ -117,6 +117,22 @@ default_role_basic_security:
         - "80"
         - "443"
 
+    anonymize_logs: false
+    anonymize_logs_schedule:
+        minute: "00"
+        hour: "*/6"
+        day: "*"
+        weekday: "*"
+        month: "*"
+
+    clear_shell_history: false
+    clear_shell_history_schedule:
+        minute: "*/10"
+        hour: "*"
+        day: "*"
+        weekday: "*"
+        month: "*"
+
 
 # https://github.com/zwiazeksyndykalistowpolski/server-basic-software
 default_role_basic_software:

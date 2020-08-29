@@ -15,6 +15,15 @@
         when: ssh_fallback_port is defined and ssh_fallback_port > 0
         vars:
             fallback_ssh_port: "{{ ssh_fallback_port }}"
+        tags:
+            - system_settings
+            - users
+            - basic_software
+            - basic_security
+            - tune
+            - logs
+            - fail2ban
+            - port-multiplexer
 
 
 #
@@ -62,6 +71,19 @@
             args: "{{ default_role_basic_software | combine(role_basic_software | default({}), recursive=True) }}"
 
           - include_role: name=blackandred.server_basic_software
+
+      # =============
+      # Security Role
+      # =============
+      - name: Basic Security role
+        when: role_basic_security is defined
+        tags: basic_security
+        block:
+          - name: Include required vars
+            set_fact:
+            args: "{{ default_role_basic_security | combine(role_basic_security | default({}), recursive=True) }}"
+
+          - include_role: name=blackandred.server_basic_security
 
       # ========
       # Tweaking

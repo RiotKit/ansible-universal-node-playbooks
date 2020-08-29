@@ -11,7 +11,7 @@
 - hosts: all
   gather_facts: no
   roles:
-      - role: blackandred.server_ssh_fallback_port
+      - role: ansible-partial-disk-encryption-role
         when: ssh_fallback_port is defined and ssh_fallback_port > 0
         vars:
             fallback_ssh_port: "{{ ssh_fallback_port }}"
@@ -57,7 +57,7 @@
             set_fact:
             args: "{{ default_role_users | combine(role_users | default({}), recursive=True) }}"
 
-          - include_role: name=blackandred.server_multi_user
+          - include_role: name=ansible-advanced-user-role
 
       # ==============
       # Basic Software
@@ -70,7 +70,7 @@
             set_fact:
             args: "{{ default_role_basic_software | combine(role_basic_software | default({}), recursive=True) }}"
 
-          - include_role: name=blackandred.server_basic_software
+          - include_role: name=ansible-basic-software-role
 
       # =============
       # Security Role
@@ -83,7 +83,7 @@
             set_fact:
             args: "{{ default_role_basic_security | combine(role_basic_security | default({}), recursive=True) }}"
 
-          - include_role: name=blackandred.server_basic_security
+          - include_role: name=ansible-basic-security-role
 
       # ========
       # Tweaking
@@ -96,7 +96,7 @@
             set_fact:
             args: "{{ default_role_tune | combine(role_tune | default({}), recursive=True) }}"
 
-          - include_role: name=infrastructure-ansible-tweak-os
+          - include_role: name=ansible-tweak-role
 
       # ====
       # Logs
@@ -109,7 +109,7 @@
             set_fact:
             args: "{{ default_role_logs | combine(role_logs | default({}), recursive=True) }}"
 
-          - include_role: name=infrastructure-ansible-logs
+          - include_role: name=ansible-logs-role
 
       # =========================
       # Security - IPS - Fail2Ban

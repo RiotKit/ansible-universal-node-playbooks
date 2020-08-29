@@ -7,6 +7,5 @@
 /.env
 /.temp/dynamic_vars/*
 /roles/*.*
-/roles/infrastructure-*
-
+/roles/ansible-*
 !.gitkeep

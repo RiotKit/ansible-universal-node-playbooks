@@ -1,10 +1,17 @@
 roles:
-    - src: blackandred.server_basic_software
-    - src: blackandred.server_multi_user
-    - src: git+https://github.com/riotkit-org/infrastructure-ansible-logs.git
-    - src: blackandred.server_ssh_fallback_port
-    - src: blackandred.server_basic_security
-    - src: git+https://github.com/riotkit-org/infrastructure-ansible-tweak-os
-    - src: blackandred.server_secure_storage
+    - src: git+https://github.com/RiotKit/ansible-basic-software-role
+      version: v1.0.0
+    - src: git+https://github.com/RiotKit/ansible-advanced-user-role.git
+      version: v1.1
+    - src: git+https://github.com/RiotKit/ansible-logs-role.git
+      version: v1.0.0
+    - src: git+https://github.com/RiotKit/ansible-ssh-fallback-port-role.git
+      version: v1.0.0
+    - src: git+https://github.com/RiotKit/ansible-basic-security-role.git
+      version: v1.0.0
+    - src: git+https://github.com/RiotKit/ansible-tweak-role.git
+      version: v1.0.0
+    - src: git+https://github.com/RiotKit/ansible-partial-disk-encryption-role.git
+      version: v1.0.0
     - src: oefenweb.fail2ban
       version: v3.3.14

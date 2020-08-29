@@ -10,7 +10,7 @@
 - hosts: all
   gather_facts: no
   roles:
-      - role: blackandred.server_ssh_fallback_port
+      - role: ansible-ssh-fallback-port-role
         when: ssh_fallback_port is defined and ssh_fallback_port > 0
         vars:
             fallback_ssh_port: "{{ ssh_fallback_port }}"
@@ -26,5 +26,5 @@
             set_fact:
             args: "{{ default_role_encryption | combine(role_encryption | default({}), recursive=True) }}"
 
-          - include_role: name=blackandred.server_secure_storage
+          - include_role: name=ansible-partial-disk-encryption-role
             tags: encryption

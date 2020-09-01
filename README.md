@@ -133,6 +133,39 @@ When a host does not override given value, then it is inherited from global defa
 rkd :edit:all-hosts-defaults-config
 ```
 
+Variables inheritance explained
+-------------------------------
+
+Given we have **inventory/group_vars/all.yaml** defined with:
+
+```yaml
+default_role_encryption:
+    enc_file: /storage
+    enc_file_size: 17160M
+```
+
+And a **host_vars/example.org.yaml** file that is host-specific:
+
+```yaml
+role_encryption:
+    enc_file_size: 900G
+    enc_mount_name: storage
+    enc_mount_path: /mnt/storage
+```
+
+Then finally the variables will be:
+
+```yaml
+role_encryption:
+    enc_file: /storage    # this one is a global default
+    enc_file_size: 900G   # this one is overridden
+    
+    # those two are present only on this host
+    enc_mount_name: storage
+    enc_mount_path: /mnt/storage
+```
+
+
 Deploying
 ---------
 

@@ -59,7 +59,9 @@ tasks:
                 ARG_ARGS="$ARG_ARGS --ask-vault-pass"
             fi
 
+            [[ -f inventory/scripts/pre_deployment/${ARG_HOST} ]] && inventory/scripts/pre_deployment/${ARG_HOST};
             ansible-playbook ./playbooks/$ARG_PLAYBOOK -i inventory/hosts.cfg --limit=${ARG_HOST} ${ARG_ARGS}
+            [[ -f inventory/scripts/post_deployment/${ARG_HOST} ]] && inventory/scripts/post_deployment/${ARG_HOST};
 
 
     :node:encrypt-first-time:

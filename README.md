@@ -72,7 +72,7 @@ How to create inventory repository?
 
 Inventory structure should consist of:
 
-**hosts.cfg (example)**
+**inventory/hosts.cfg (example)**
 
 ```bash
 [disasterrecovery]
@@ -80,25 +80,37 @@ recovery.example.internal
 
 ```
 
-**group_vars/all**
+**inventory/group_vars/all**
 
 This file should be actually created from template by executing command `rkd :copy-host-defaults` first time.
 In it you can define deployment settings globally for EACH HOST.
 
-**host_vars/recovery.example.internal.yaml (example name)**
+**inventory/host_vars/recovery.example.internal.yaml (example name)**
 
 There you should define `ansible_ssh_user`, `ansible_ssh_pass`, `ansible_sudo_pass` and/or private key path.
 In this file you can also overwrite deployment settings for this host.
 
-When in `group_vars/all` there is a section for example `default_role_encryption` then you can create a `role_encryption` in `host_vars/recovery.example.internal.yaml`.
+When in `inventory/group_vars/all` there is a section for example `default_role_encryption` then you can create a `role_encryption` in `inventory/host_vars/recovery.example.internal.yaml`.
 The values will be MERGED together, the section would not replace original one but will merge all values recursively.
+
+**inventory/scripts/pre_deployment/{{hostname or groupname}}**
+
+Optionally an executable script could be created that will be started before `ansible-playbook` with host filter.
+
+Example usage: Decrypt SSH private key
+
+**inventory/scripts/post_deployment/{{hostname or groupname}}**
+
+Optionally an executable script can be placed there, then it will be started right after `ansible-playbook` will finish execution.
+
+Example usage: Remove previously decrypted, plain SSH private key
 
 **ENCRYPTION**
 
 Each host file in host_vars can be encrypted with a different Ansible Vault key, Ansible supports this.
 With this combination you can divide access to multiple admins handling administration of different servers.
 
-*TIP: Keep hosts.cfg with minimum of information (only group names and host names) to keep it unencrypted, so you will not have to enter password twice*
+*TIP: Keep inventory/hosts.cfg with minimum of information (only group names and host names) to keep it unencrypted, so you will not have to enter password twice*
 
 **Adding this inventory repository**
 

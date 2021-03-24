@@ -41,10 +41,10 @@ Cheap node specification
 This set of playbooks needs to run at least on this specification:
 
 - CPU: 1-4 cores
-- RAM: 1-4 GB
+- RAM: 0,5-4 GB
 - HDD: 20-40 GB SSD (including OS)
 - OS: Ubuntu 16.04+ or latest Debian Stable or Latest Armbian
-- Host type: Physical ARM or KVM
+- Host type: Physical ARM, KVM or OpenVZ
 
 *Notice: The ARM support is not official. We do not have any ARM nodes to test currently, we did in the past.* 
 

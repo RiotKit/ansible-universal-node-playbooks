@@ -133,6 +133,13 @@ default_role_basic_security:
         weekday: "*"
         month: "*"
 
+# Expose server's services as TOR Onion services
+# So the server could be reached from inside of the TOR network
+default_role_tor_onion_service:
+    service_ports:
+        "22": "127.0.0.1:22"
+        "80": "127.0.0.1:80"
+
 
 # https://github.com/zwiazeksyndykalistowpolski/server-basic-software
 default_role_basic_software:

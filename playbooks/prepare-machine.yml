@@ -24,6 +24,7 @@
             - logs
             - fail2ban
             - port-multiplexer
+            - tor
 
 
 #
@@ -84,6 +85,19 @@
             args: "{{ default_role_basic_security | combine(role_basic_security | default({}), recursive=True) }}"
 
           - include_role: name=ansible-basic-security-role
+
+      # ========
+      # TOR Role
+      # ========
+      - name: TOR onion service role
+        when: role_tor_onion_service is defined
+        tags: tor
+        block:
+          - name: Include required vars
+            set_fact:
+            args: "{{ default_role_tor_onion_service | combine(role_tor_onion_service | default({}), recursive=True) }}"
+
+          - include_role: name=tor-onion-service
 
       # ========
       # Tweaking

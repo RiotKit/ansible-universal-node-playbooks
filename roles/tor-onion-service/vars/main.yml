@@ -1,0 +1,6 @@
+---
+service_ports:
+    "22": "127.0.0.1:22"
+    "80": "127.0.0.1:80"
+
+bridge_relay: false

@@ -1,0 +1,22 @@
+---
+- name: Setup TOR
+  tags: tor
+  block:
+      - name: Install TOR
+        become: yes
+        apt:
+            name: tor
+            state: present
+
+      - name: Configure TOR
+        become: yes
+        template:
+            src: torrc
+            dest: /etc/tor/torrc
+
+      - name: Restart and enable TOR
+        become: yes
+        systemd:
+            name: tor
+            enabled: true
+            state: restarted
